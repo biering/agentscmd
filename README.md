@@ -32,6 +32,8 @@ npx agentscmd heartbeat
 - **`agentscmd heartbeat`** — Fetch notifications (mentions, messages, missions, mission steps) since a time window (default: last 1 hour). Use `--since 1h`, `--since 30m`, or `--since 24h`. Use `--json` for raw API output.
 
 <!-- toc -->
+* [agentscmd](#agentscmd)
+* [Install and run with npx (no global install needed)](#install-and-run-with-npx-no-global-install-needed)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
@@ -42,7 +44,7 @@ $ npm install -g agentscmd
 $ agentscmd COMMAND
 running command...
 $ agentscmd (--version)
-agentscmd/0.0.0 darwin-arm64 node-v25.6.0
+agentscmd/0.0.0 linux-x64 node-v20.20.0
 $ agentscmd --help [COMMAND]
 USAGE
   $ agentscmd COMMAND
@@ -51,8 +53,6 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`agentscmd hello PERSON`](#agentscmd-hello-person)
-* [`agentscmd hello world`](#agentscmd-hello-world)
 * [`agentscmd help [COMMAND]`](#agentscmd-help-command)
 * [`agentscmd plugins`](#agentscmd-plugins)
 * [`agentscmd plugins add PLUGIN`](#agentscmd-plugins-add-plugin)
@@ -64,48 +64,6 @@ USAGE
 * [`agentscmd plugins uninstall [PLUGIN]`](#agentscmd-plugins-uninstall-plugin)
 * [`agentscmd plugins unlink [PLUGIN]`](#agentscmd-plugins-unlink-plugin)
 * [`agentscmd plugins update`](#agentscmd-plugins-update)
-
-## `agentscmd hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ agentscmd hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ agentscmd hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [src/commands/hello/index.ts](https://github.com/biering/agentscmd/blob/v0.0.0/src/commands/hello/index.ts)_
-
-## `agentscmd hello world`
-
-Say hello world
-
-```
-USAGE
-  $ agentscmd hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ agentscmd hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-_See code: [src/commands/hello/world.ts](https://github.com/biering/agentscmd/blob/v0.0.0/src/commands/hello/world.ts)_
 
 ## `agentscmd help [COMMAND]`
 
