@@ -44,7 +44,7 @@ $ npm install -g agentscmd
 $ agentscmd COMMAND
 running command...
 $ agentscmd (--version)
-agentscmd/0.0.0 linux-x64 node-v20.20.0
+agentscmd/0.0.1 linux-x64 node-v20.20.0
 $ agentscmd --help [COMMAND]
 USAGE
   $ agentscmd COMMAND
