@@ -1,0 +1,108 @@
+import { Command, Flags } from '@oclif/core'
+import { apiRequest, ApiError } from '../lib/api.js'
+
+function toError(e: unknown): Error {
+  return e instanceof Error ? e : new Error(String(e))
+}
+
+/** Parse a duration string like "1h", "30m", "24h" into ISO since timestamp */
+function sinceToIso(since: string): string {
+  const match = since.match(/^(\d+)(m|h|d)$/i)
+  if (!match) {
+    throw new Error(
+      'Invalid --since format. Use e.g. 1h, 30m, 24h (minutes, hours, days)',
+    )
+  }
+  const value = Number.parseInt(match[1], 10)
+  const unit = match[2].toLowerCase()
+  let ms: number
+  switch (unit) {
+    case 'm':
+      ms = value * 60 * 1000
+      break
+    case 'h':
+      ms = value * 60 * 60 * 1000
+      break
+    case 'd':
+      ms = value * 24 * 60 * 60 * 1000
+      break
+    default:
+      ms = value * 60 * 60 * 1000
+  }
+  const date = new Date(Date.now() - ms)
+  return date.toISOString()
+}
+
+export default class Heartbeat extends Command {
+  static description =
+    'Fetch notifications (mentions, messages, missions, mission steps) since a given time'
+  static examples = [
+    `<%= config.bin %> <%= command.id %>
+  $ AGENTSCMD_API_KEY=your-key npx agentscmd heartbeat
+  $ agentscmd heartbeat --since 1h --json
+`,
+  ]
+
+  static flags = {
+    since: Flags.string({
+      char: 's',
+      description: 'Only include notifications since this time (e.g. 1h, 30m, 24h)',
+      default: '1h',
+    }),
+    'mentions-only': Flags.boolean({
+      description: 'Only include inbox notifications that include mentions',
+      default: false,
+    }),
+    'unread-only': Flags.boolean({
+      description: 'Only include inbox notifications with unread_count > 0',
+      default: false,
+    }),
+    limit: Flags.integer({
+      char: 'n',
+      description: 'Max notifications to return',
+      default: 50,
+    }),
+    json: Flags.boolean({
+      char: 'j',
+      description: 'Output raw JSON',
+      default: false,
+    }),
+  }
+
+  static args = {}
+
+  async run(): Promise<void> {
+    const { flags } = await this.parse(Heartbeat)
+    try {
+      const sinceIso = sinceToIso(flags.since)
+      const res = await apiRequest<{ data?: unknown[]; cursor?: string }>(
+        '/api/v1/notifications',
+        {
+          searchParams: {
+            since: sinceIso,
+            limit: String(flags.limit),
+            ...(flags['mentions-only'] ? { mentions_only: 'true' } : {}),
+            ...(flags['unread-only'] ? { unread_only: 'true' } : {}),
+          },
+        },
+      )
+      if (flags.json) {
+        this.log(JSON.stringify(res, null, 2))
+      } else {
+        const data = Array.isArray((res as { data?: unknown[] }).data)
+          ? (res as { data: unknown[] }).data
+          : (res as unknown as unknown[])
+        if (!data?.length) {
+          this.log('No new notifications in the given period.')
+          return
+        }
+        this.log(JSON.stringify(data, null, 2))
+      }
+    } catch (err: unknown) {
+      if (err instanceof ApiError) {
+        this.error(err.message, { exit: err.status >= 400 ? err.status : 1 })
+      }
+      throw toError(err)
+    }
+  }
+}
