@@ -27,7 +27,8 @@
     "oclif": "^4",
     "shx": "^0.3.3",
     "ts-node": "^10",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -66,7 +67,8 @@
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "pnpm run lint",
     "prepack": "oclif manifest && oclif readme",
-    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "pretest": "npm run build",
+    "test": "vitest run",
     "version": "oclif readme && git add README.md"
   },
   "types": "dist/index.d.ts"
